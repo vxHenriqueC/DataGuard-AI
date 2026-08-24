@@ -2,144 +2,528 @@
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>DataGuard AI</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
-    
+
+
 <body>
 
-    <!-- ============================= -->
-    <!-- SIDEBAR -->
-    <!-- ============================= -->
 
-    <aside class="sidebar">
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
 
-        <div class="logo">
+    <aside id="sidebar" class="sidebar">
 
-            <div class="logo-icon">
-                🛡
+        <div class="sidebar-top">
+
+            <div class="logo">
+
+                🛡️
+
+                <span>
+                    DataGuard AI
+                </span>
+
             </div>
-            
-            <div>
-                <h1>DataGuard</h1>
-                <span>AI Security</span>
-            </div>
+
+
+            <button
+                id="toggleSidebar"
+                class="toggle-button"
+            >
+                ☰
+            </button>
 
         </div>
 
 
         <nav>
 
-            <a href="#" data-page="dashboard" class="active">
-                <span>⌂</span>
-                Dashboard
+            <a
+                href="#"
+                class="menu-link active"
+                data-page="dashboard"
+            >
+                🏠
+                <span>Dashboard</span>
             </a>
 
-            <a href="#" data-page="analysis">
-                <span>⌕</span>
-                Analisar Dados
+
+            <a
+                href="#"
+                class="menu-link"
+                data-page="analisar"
+            >
+                🔍
+                <span>Analisar Arquivo</span>
             </a>
 
-            <a href="#" data-page="results">
-                <span>◈</span>
-                Resultados
+
+            <a
+                href="#"
+                class="menu-link"
+                data-page="historico"
+            >
+                📋
+                <span>Histórico</span>
             </a>
 
-            <a href="#" data-page="reports">
-                <span>▤</span>
-                Relatórios
-            </a>
 
-            <a href="#" data-page="monitoring">
-                <span>◉</span>
-                Monitoramento
-            </a>
-
-            <a href="#" data-page="settings">
-                <span>⚙</span>
-                Configurações
+            <a
+                href="#"
+                class="menu-link"
+                data-page="configuracoes"
+            >
+                ⚙️
+                <span>Configurações</span>
             </a>
 
         </nav>
 
-
-        <div class="sidebar-footer">
-
-            <div class="status-dot"></div>
-
-            <span>
-                Sistema operacional
-            </span>
-
-        </div>
-
     </aside>
 
 
-    <!-- ============================= -->
-    <!-- MAIN -->
-    <!-- ============================= -->
 
-    <main class="main">
+    <!-- =========================================
+         CONTEÚDO
+    ========================================== -->
 
-        <!-- HEADER -->
-
-        <header class="header">
-
-            <div>
-
-                <p class="welcome">
-                    Plataforma de segurança
-                </p>
-
-                <h2 id="page-title">
-                    Dashboard
-                </h2>
-
-            </div>
+    <main id="main" class="main">
 
 
-            <div class="header-actions">
+        <!-- =====================================
+             DASHBOARD
+        ====================================== -->
 
-                <button
-                    class="notification"
-                    id="notificationBtn">
-                    🔔
-                </button>
+        <section
+            id="dashboard"
+            class="page active"
+        >
+
+            <div class="header">
+
+                <div>
+
+                    <h1>
+                        Dashboard
+                    </h1>
+
+                    <p>
+                        Proteção inteligente para seus dados.
+                    </p>
+
+                </div>
 
 
-                <div class="profile">
+                <div class="system-status">
 
-                    <div class="avatar">
-                        U
-                    </div>
+                    <span></span>
 
-                    <div>
-
-                        <strong>
-                            Usuário
-                        </strong>
-
-                        <span>
-                            Administrador
-                        </span>
-
-                    </div>
+                    Sistema online
 
                 </div>
 
             </div>
 
-        </header>
+
+            <!-- ESTATÍSTICAS -->
+
+            <div class="stats">
 
 
-        <!-- CONTEÚDO -->
+                <div class="stat-card">
 
-        <div id="app"></div>
+                    <div class="stat-icon">
+                        📄
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Arquivos analisados
+                        </small>
+
+                        <strong id="totalFiles">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        🔐
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Dados protegidos
+                        </small>
+
+                        <strong id="protectedData">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        ⚠️
+                    </div>
+
+                    <div>
+
+                        <small>
+                            Riscos encontrados
+                        </small>
+
+                        <strong id="riskCount">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- CARD -->
+
+            <div class="welcome-card">
+
+                <div>
+
+                    <h2>
+                        Comece uma análise
+                    </h2>
+
+                    <p>
+                        Envie um arquivo para identificar
+                        informações sensíveis automaticamente.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="primary-button"
+                    id="goAnalyze"
+                >
+
+                    🔍
+
+                    Analisar arquivo
+
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             ANALISAR
+        ====================================== -->
+
+        <section
+            id="analisar"
+            class="page"
+        >
+
+            <div class="header">
+
+                <div>
+
+                    <h1>
+                        Analisar Arquivo
+                    </h1>
+
+                    <p>
+                        Faça o upload de um arquivo para análise.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="upload-card">
+
+
+                <div class="upload-icon">
+
+                    📁
+
+                </div>
+
+
+                <h2>
+                    Selecione um arquivo
+                </h2>
+
+
+                <p>
+                    PDF, DOC, DOCX, TXT ou CSV
+                </p>
+
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept=".pdf,.doc,.docx,.txt,.csv"
+                >
+
+
+                <label
+                    for="fileInput"
+                    class="file-button"
+                >
+
+                    📂
+
+                    Selecionar arquivo
+
+                </label>
+
+
+                <div
+                    id="selectedFile"
+                    class="selected-file"
+                >
+
+                    Nenhum arquivo selecionado
+
+                </div>
+
+
+                <div class="file-types">
+
+                    <span>PDF</span>
+                    <span>DOC</span>
+                    <span>DOCX</span>
+                    <span>TXT</span>
+                    <span>CSV</span>
+
+                </div>
+
+
+                <button
+                    id="analyzeButton"
+                    class="primary-button"
+                >
+
+                    🔍
+
+                    Analisar arquivo
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- RESULTADO -->
+
+            <div
+                id="resultArea"
+                class="result-area"
+            >
+
+                <div class="result-empty">
+
+                    <div>
+                        🔎
+                    </div>
+
+                    <h3>
+                        Aguardando análise
+                    </h3>
+
+                    <p>
+                        O resultado aparecerá aqui.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             HISTÓRICO
+        ====================================== -->
+
+        <section
+            id="historico"
+            class="page"
+        >
+
+            <div class="header">
+
+                <div>
+
+                    <h1>
+                        Histórico
+                    </h1>
+
+                    <p>
+                        Arquivos analisados anteriormente.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="history"
+                class="history-card"
+            >
+
+                <div class="result-empty">
+
+                    <div>
+                        📋
+                    </div>
+
+                    <h3>
+                        Nenhuma análise
+                    </h3>
+
+                    <p>
+                        As análises aparecerão aqui.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             CONFIGURAÇÕES
+        ====================================== -->
+
+        <section
+            id="configuracoes"
+            class="page"
+        >
+
+            <div class="header">
+
+                <div>
+
+                    <h1>
+                        Configurações
+                    </h1>
+
+                    <p>
+                        Configure o DataGuard AI.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="settings-card">
+
+
+                <div class="setting">
+
+                    <div>
+
+                        <h3>
+                            Análise automática
+                        </h3>
+
+                        <p>
+                            Analisar o arquivo automaticamente após o upload.
+                        </p>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span></span>
+
+                    </label>
+
+                </div>
+
+
+
+                <div class="setting">
+
+                    <div>
+
+                        <h3>
+                            Detecção de dados sensíveis
+                        </h3>
+
+                        <p>
+                            Identificar informações pessoais e sensíveis.
+                        </p>
+
+                    </div>
+
+
+                    <label class="switch">
+
+                        <input
+                            type="checkbox"
+                            checked
+                        >
+
+                        <span></span>
+
+                    </label>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
 
     </main>
 
