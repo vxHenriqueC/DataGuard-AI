@@ -1,1250 +1,445 @@
-/* =====================================
-   DATAGUARD AI
-   FRONTEND CONTROLLER
-===================================== */
+const API_URL = "http://127.0.0.1:8000";
 
 
-/* =====================================
-   ESTADO DA APLICAÇÃO
-===================================== */
+// =========================================
+// SIDEBAR
+// =========================================
 
-const state = {
+const sidebar = document.getElementById("sidebar");
 
-    filesAnalyzed: 0,
+const toggleSidebar =
+    document.getElementById("toggleSidebar");
 
-    risksFound: 0,
+const main =
+    document.getElementById("main");
 
-    alerts: 0,
 
-    protection: 0,
+toggleSidebar.addEventListener("click", function () {
 
-    lastFile: null,
+    sidebar.classList.toggle("closed");
 
-    lastRisk: null
+    main.classList.toggle("closed");
 
-};
+});
 
 
-/* =====================================
-   ELEMENTOS
-===================================== */
+// =========================================
+// NAVEGAÇÃO
+// =========================================
 
-const app =
-    document.getElementById("app");
+const menuLinks =
+    document.querySelectorAll(".menu-link");
 
-const pageTitle =
-    document.getElementById("page-title");
+const pages =
+    document.querySelectorAll(".page");
 
-const navigation =
-    document.querySelectorAll("nav a");
 
+function abrirPagina(nome) {
 
-/* =====================================
-   INPUT DE ARQUIVO
-===================================== */
+    pages.forEach(function (page) {
 
-const fileInput =
-    document.createElement("input");
+        page.classList.remove("active");
 
-fileInput.type = "file";
+    });
 
-fileInput.accept =
-    ".csv,.xlsx,.json,.txt,.pdf";
 
-fileInput.style.display = "none";
+    menuLinks.forEach(function (link) {
 
-document.body.appendChild(fileInput);
+        link.classList.remove("active");
 
+    });
 
-/* =====================================
-   PÁGINAS
-===================================== */
 
-const pages = {
+    const pagina =
+        document.getElementById(nome);
 
+    if (pagina) {
 
-    /* =================================
-       DASHBOARD
-    ================================= */
+        pagina.classList.add("active");
 
-    dashboard: {
-
-        title: "Dashboard",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    VISÃO GERAL
-                </span>
-
-                <h2>
-                    Dashboard
-                </h2>
-
-                <p class="page-description">
-                    Visão geral da segurança dos seus dados.
-                </p>
-
-
-                <div class="stats">
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon blue">
-                            ◈
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Arquivos analisados
-                            </span>
-
-                            <strong>
-                                ${state.filesAnalyzed}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon red">
-                            !
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Riscos encontrados
-                            </span>
-
-                            <strong>
-                                ${state.risksFound}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon yellow">
-                            ⚠
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Alertas
-                            </span>
-
-                            <strong>
-                                ${state.alerts}
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="stat-card">
-
-                        <div class="stat-icon green">
-                            ✓
-                        </div>
-
-                        <div>
-
-                            <span>
-                                Dados protegidos
-                            </span>
-
-                            <strong>
-                                ${state.protection}%
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-                <div class="content-grid">
-
-
-                    <div class="panel">
-
-                        <span class="section-label">
-                            ANÁLISE
-                        </span>
-
-                        <h3>
-                            Analisar dados
-                        </h3>
-
-                        <p>
-                            Envie um arquivo para identificar
-                            possíveis riscos de segurança.
-                        </p>
-
-
-                        <div
-                            class="upload-area"
-                            id="dashboardUpload"
-                        >
-
-                            <div class="upload-icon">
-                                ↑
-                            </div>
-
-                            <h3>
-                                Envie um arquivo
-                            </h3>
-
-                            <p>
-                                CSV, XLSX, JSON, TXT ou PDF
-                            </p>
-
-                            <button
-                                class="upload-button"
-                                id="dashboardUploadButton"
-                            >
-                                Selecionar arquivo
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="panel">
-
-                        <span class="section-label">
-                            SEGURANÇA
-                        </span>
-
-                        <h3>
-                            Nível de risco
-                        </h3>
-
-
-                        <div
-                            class="risk-circle"
-                            id="dashboardRisk"
-                        >
-
-                            <strong>
-                                ${state.lastRisk
-                                    ? state.lastRisk.score
-                                    : "--"}
-                            </strong>
-
-                            <span>
-                                ${state.lastRisk
-                                    ? state.lastRisk.level
-                                    : "Sem análise"}
-                            </span>
-
-                        </div>
-
-
-                        <div class="risk-info">
-
-                            <div>
-                                <span
-                                    class="risk-indicator"
-                                    style="background:#22c55e"
-                                ></span>
-
-                                Baixo
-                            </div>
-
-                            <div>
-                                <span
-                                    class="risk-indicator"
-                                    style="background:#f59e0b"
-                                ></span>
-
-                                Médio
-                            </div>
-
-                            <div>
-                                <span
-                                    class="risk-indicator"
-                                    style="background:#ef4444"
-                                ></span>
-
-                                Alto
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                </div>
-
-
-            </section>
-
-        `
-    },
-
-
-    /* =================================
-       ANÁLISE
-    ================================= */
-
-    analysis: {
-
-        title: "Analisar Dados",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    ANÁLISE
-                </span>
-
-                <h2>
-                    Analisar Dados
-                </h2>
-
-                <p class="page-description">
-                    Envie um arquivo para o DataGuard AI
-                    identificar possíveis dados sensíveis.
-                </p>
-
-
-                <div
-                    class="panel"
-                    style="max-width:900px"
-                >
-
-                    <div
-                        class="upload-area"
-                        id="mainUpload"
-                    >
-
-                        <div class="upload-icon">
-                            ↑
-                        </div>
-
-                        <h3>
-                            Arraste seu arquivo aqui
-                        </h3>
-
-                        <p>
-                            ou selecione um arquivo
-                        </p>
-
-                        <button
-                            class="upload-button"
-                            id="mainUploadButton"
-                        >
-                            Selecionar arquivo
-                        </button>
-
-                        <small>
-                            CSV · XLSX · JSON · TXT · PDF
-                        </small>
-
-                    </div>
-
-                </div>
-
-
-                <div
-                    id="analysisStatus"
-                    style="margin-top:20px"
-                ></div>
-
-
-            </section>
-
-        `
-    },
-
-
-    /* =================================
-       RESULTADOS
-    ================================= */
-
-    results: {
-
-        title: "Resultados",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    SEGURANÇA
-                </span>
-
-                <h2>
-                    Resultados
-                </h2>
-
-                <p class="page-description">
-                    Veja os riscos identificados pelo DataGuard AI.
-                </p>
-
-
-                <div class="result-grid">
-
-
-                    <div class="result-card">
-
-                        <span>
-                            Nível de risco
-                        </span>
-
-                        <strong class="risk-high">
-
-                            ${
-                                state.lastRisk
-                                    ? state.lastRisk.level
-                                    : "Sem análise"
-                            }
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="result-card">
-
-                        <span>
-                            Score de risco
-                        </span>
-
-                        <strong>
-
-                            ${
-                                state.lastRisk
-                                    ? state.lastRisk.score
-                                    : "--"
-                            }
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="result-card">
-
-                        <span>
-                            Arquivo analisado
-                        </span>
-
-                        <strong>
-
-                            ${
-                                state.lastFile
-                                    ? state.lastFile.name
-                                    : "Nenhum"
-                            }
-
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-                ${
-                    state.lastRisk
-
-                    ? `
-
-                    <div class="panel" style="margin-top:20px">
-
-                        <span class="section-label">
-                            DETECÇÃO
-                        </span>
-
-                        <h3>
-                            Possíveis problemas encontrados
-                        </h3>
-
-                        <p style="margin-top:10px">
-
-                            ${state.lastRisk.message}
-
-                        </p>
-
-                    </div>
-
-                    `
-
-                    :
-
-                    `
-
-                    <div class="empty-state">
-
-                        <h3>
-                            Nenhuma análise realizada
-                        </h3>
-
-                        <p>
-                            Envie um arquivo para visualizar
-                            os resultados.
-                        </p>
-
-                    </div>
-
-                    `
-                }
-
-
-            </section>
-
-        `
-    },
-
-
-    /* =================================
-       RELATÓRIOS
-    ================================= */
-
-    reports: {
-
-        title: "Relatórios",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    DOCUMENTAÇÃO
-                </span>
-
-                <h2>
-                    Relatórios
-                </h2>
-
-                <p class="page-description">
-                    Relatórios das análises realizadas.
-                </p>
-
-
-                ${
-                    state.lastFile
-
-                    ?
-
-                    `
-
-                    <div class="panel">
-
-                        <h3>
-                            Última análise
-                        </h3>
-
-                        <p>
-                            Arquivo:
-                            <strong>
-                                ${state.lastFile.name}
-                            </strong>
-                        </p>
-
-                        <p>
-                            Risco:
-                            <strong>
-                                ${state.lastRisk.level}
-                            </strong>
-                        </p>
-
-                        <button
-                            class="save-button"
-                            id="generateReport"
-                        >
-                            Gerar relatório
-                        </button>
-
-                    </div>
-
-                    `
-
-                    :
-
-                    `
-
-                    <div class="empty-state">
-
-                        <h3>
-                            Nenhum relatório disponível
-                        </h3>
-
-                        <p>
-                            Faça uma análise para gerar
-                            um relatório.
-                        </p>
-
-                    </div>
-
-                    `
-                }
-
-
-            </section>
-
-        `
-    },
-
-
-    /* =================================
-       MONITORAMENTO
-    ================================= */
-
-    monitoring: {
-
-        title: "Monitoramento",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    MONITORAMENTO
-                </span>
-
-                <h2>
-                    Monitoramento
-                </h2>
-
-                <p class="page-description">
-                    Acompanhe o estado de segurança do sistema.
-                </p>
-
-
-                <div class="monitor-grid">
-
-
-                    <div class="monitor-card">
-
-                        <span>
-                            Status do sistema
-                        </span>
-
-                        <strong class="online">
-                            ● Online
-                        </strong>
-
-                    </div>
-
-
-                    <div class="monitor-card">
-
-                        <span>
-                            Ameaças detectadas
-                        </span>
-
-                        <strong>
-                            ${state.risksFound}
-                        </strong>
-
-                    </div>
-
-
-                    <div class="monitor-card">
-
-                        <span>
-                            Última análise
-                        </span>
-
-                        <strong>
-
-                            ${
-                                state.lastFile
-                                    ? "Concluída"
-                                    : "Nunca"
-                            }
-
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-            </section>
-
-        `
-    },
-
-
-    /* =================================
-       CONFIGURAÇÕES
-    ================================= */
-
-    settings: {
-
-        title: "Configurações",
-
-        content: () => `
-
-            <section class="page">
-
-                <span class="section-label">
-                    SISTEMA
-                </span>
-
-                <h2>
-                    Configurações
-                </h2>
-
-                <p class="page-description">
-                    Configure o DataGuard AI.
-                </p>
-
-
-                <div class="settings-card">
-
-
-                    <div class="setting">
-
-                        <span>
-                            Nome do sistema
-                        </span>
-
-                        <input
-                            type="text"
-                            value="DataGuard AI"
-                        >
-
-                    </div>
-
-
-                    <div class="setting">
-
-                        <span>
-                            Análise automática
-                        </span>
-
-                        <label class="switch">
-
-                            <input
-                                type="checkbox"
-                                checked
-                            >
-
-                            <span class="slider"></span>
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="setting">
-
-                        <span>
-                            Notificações
-                        </span>
-
-                        <label class="switch">
-
-                            <input
-                                type="checkbox"
-                                checked
-                            >
-
-                            <span class="slider"></span>
-
-                        </label>
-
-                    </div>
-
-
-                    <div class="setting">
-
-                        <span>
-                            Proteção de dados
-                        </span>
-
-                        <label class="switch">
-
-                            <input
-                                type="checkbox"
-                                checked
-                            >
-
-                            <span class="slider"></span>
-
-                        </label>
-
-                    </div>
-
-
-                    <button
-                        class="save-button"
-                        id="saveSettings"
-                    >
-                        Salvar configurações
-                    </button>
-
-
-                </div>
-
-
-            </section>
-
-        `
     }
 
-};
 
+    const link =
+        document.querySelector(
+            `.menu-link[data-page="${nome}"]`
+        );
 
-/* =====================================
-   CARREGAR PÁGINA
-===================================== */
-
-function loadPage(page) {
-
-    if (!pages[page]) {
-        return;
-    }
-
-    pageTitle.textContent =
-        pages[page].title;
-
-    app.innerHTML =
-        pages[page].content();
-
-    initializePage(page);
-}
-
-
-/* =====================================
-   NAVEGAÇÃO
-===================================== */
-
-navigation.forEach(link => {
-
-    link.addEventListener("click", event => {
-
-        event.preventDefault();
-
-        navigation.forEach(item => {
-
-            item.classList.remove("active");
-
-        });
+    if (link) {
 
         link.classList.add("active");
 
-        const page =
-            link.dataset.page;
+    }
 
-        loadPage(page);
+}
+
+
+menuLinks.forEach(function (link) {
+
+    link.addEventListener("click", function (event) {
+
+        event.preventDefault();
+
+        abrirPagina(link.dataset.page);
 
     });
 
 });
 
 
-/* =====================================
-   INICIALIZAÇÃO DE CADA PÁGINA
-===================================== */
+// =========================================
+// BOTÃO ANALISAR DO DASHBOARD
+// =========================================
 
-function initializePage(page) {
-
-    if (
-        page === "dashboard"
-    ) {
-
-        const button =
-            document.getElementById(
-                "dashboardUploadButton"
-            );
-
-        if (button) {
-
-            button.addEventListener(
-                "click",
-                () => fileInput.click()
-            );
-
-        }
-    }
+const goAnalyze =
+    document.getElementById("goAnalyze");
 
 
-    if (
-        page === "analysis"
-    ) {
+goAnalyze.addEventListener("click", function () {
 
-        const button =
-            document.getElementById(
-                "mainUploadButton"
-            );
+    abrirPagina("analisar");
 
-        if (button) {
-
-            button.addEventListener(
-                "click",
-                () => fileInput.click()
-            );
-
-        }
-    }
+});
 
 
-    if (
-        page === "reports"
-    ) {
+// =========================================
+// ARQUIVO
+// =========================================
 
-        const button =
-            document.getElementById(
-                "generateReport"
-            );
+const fileInput =
+    document.getElementById("fileInput");
 
-        if (button) {
+const selectedFile =
+    document.getElementById("selectedFile");
 
-            button.addEventListener(
-                "click",
-                generateReport
-            );
-
-        }
-    }
-
-
-    if (
-        page === "settings"
-    ) {
-
-        const button =
-            document.getElementById(
-                "saveSettings"
-            );
-
-        if (button) {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    alert(
-                        "Configurações salvas com sucesso!"
-                    );
-
-                }
-            );
-
-        }
-    }
-
-}
-
-
-/* =====================================
-   SELEÇÃO DO ARQUIVO
-===================================== */
 
 fileInput.addEventListener(
     "change",
-    () => {
+    function () {
 
         const file =
             fileInput.files[0];
 
+
         if (!file) {
+
+            selectedFile.textContent =
+                "Nenhum arquivo selecionado";
+
             return;
+
         }
 
-        analyzeFile(file);
+
+        selectedFile.textContent =
+            `Arquivo selecionado: ${file.name}`;
 
     }
 );
 
 
-/* =====================================
-   ANÁLISE
-===================================== */
+// =========================================
+// ANALISAR
+// =========================================
 
-function analyzeFile(file) {
+const analyzeButton =
+    document.getElementById("analyzeButton");
 
-    state.lastFile = file;
-
-    const extension =
-        file.name
-            .split(".")
-            .pop()
-            .toLowerCase();
+const resultArea =
+    document.getElementById("resultArea");
 
 
-    const allowed = [
-        "csv",
-        "xlsx",
-        "json",
-        "txt",
-        "pdf"
+analyzeButton.addEventListener(
+    "click",
+    async function () {
+
+        const file =
+            fileInput.files[0];
+
+
+        if (!file) {
+
+            resultArea.innerHTML = `
+
+                <div class="result-empty">
+
+                    <div>⚠️</div>
+
+                    <h3>
+                        Nenhum arquivo selecionado
+                    </h3>
+
+                    <p>
+                        Escolha um arquivo primeiro.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        resultArea.innerHTML = `
+
+            <div class="result-empty">
+
+                <div>⏳</div>
+
+                <h3>
+                    Analisando arquivo...
+                </h3>
+
+                <p>
+                    Aguarde enquanto o DataGuard AI
+                    processa o arquivo.
+                </p>
+
+            </div>
+
+        `;
+
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "file",
+            file
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/analisar`,
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Erro na API"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            mostrarResultado(data);
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            resultArea.innerHTML = `
+
+                <div class="result-empty">
+
+                    <div>❌</div>
+
+                    <h3>
+                        Erro de conexão
+                    </h3>
+
+                    <p>
+                        Verifique se o backend
+                        está rodando em
+                        http://127.0.0.1:8000
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+);
+
+
+// =========================================
+// MOSTRAR RESULTADO
+// =========================================
+
+function mostrarResultado(data) {
+
+    const arquivo =
+        data.arquivo || {};
+
+
+    const analise =
+        data.analise || {};
+
+
+    resultArea.innerHTML = `
+
+        <div class="result-card">
+
+            <h2>
+                🛡️ Resultado da análise
+            </h2>
+
+
+            <div class="result-item">
+
+                <strong>
+                    Arquivo:
+                </strong>
+
+                ${arquivo.nome || "N/A"}
+
+            </div>
+
+
+            <div class="result-item">
+
+                <strong>
+                    Tamanho:
+                </strong>
+
+                ${formatarTamanho(
+                    arquivo.tamanho || 0
+                )}
+
+            </div>
+
+
+            <div class="result-item">
+
+                <strong>
+                    Tipo:
+                </strong>
+
+                ${arquivo.tipo || "N/A"}
+
+            </div>
+
+
+            <div class="result-item">
+
+                <strong>
+                    Status:
+                </strong>
+
+                ${data.status || "N/A"}
+
+            </div>
+
+
+            <div class="result-item">
+
+                <strong>
+                    Análise:
+                </strong>
+
+                ${analise.mensagem ||
+                    "Arquivo recebido com sucesso."}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    const totalFiles =
+        document.getElementById("totalFiles");
+
+
+    totalFiles.textContent =
+        Number(totalFiles.textContent) + 1;
+
+}
+
+
+// =========================================
+// TAMANHO
+// =========================================
+
+function formatarTamanho(bytes) {
+
+    if (bytes === 0) {
+
+        return "0 Bytes";
+
+    }
+
+
+    const unidades = [
+        "Bytes",
+        "KB",
+        "MB",
+        "GB"
     ];
 
 
-    if (!allowed.includes(extension)) {
-
-        alert(
-            "Formato de arquivo não suportado."
-        );
-
-        return;
-    }
-
-
-    /*
-        IMPORTANTE:
-
-        Esta parte ainda é uma
-        simulação.
-
-        Depois vamos substituir
-        isso pela API Python.
-    */
-
-    const score =
+    const i =
         Math.floor(
-            Math.random() * 101
+            Math.log(bytes) /
+            Math.log(1024)
         );
 
 
-    let level;
-
-    let message;
-
-
-    if (score < 40) {
-
-        level = "Baixo";
-
-        message =
-            "Nenhum risco crítico identificado. " +
-            "Os dados apresentam baixo nível de exposição.";
-
-    }
-
-    else if (score < 70) {
-
-        level = "Médio";
-
-        message =
-            "Foram identificados possíveis dados " +
-            "que precisam de atenção.";
-
-    }
-
-    else {
-
-        level = "Alto";
-
-        message =
-            "Foram identificados possíveis dados sensíveis " +
-            "ou informações que podem representar risco.";
-    }
-
-
-    state.lastRisk = {
-
-        score: score,
-
-        level: level,
-
-        message: message
-
-    };
-
-
-    state.filesAnalyzed++;
-
-    state.risksFound =
-        level === "Alto"
-            ? state.risksFound + 3
-            : level === "Médio"
-                ? state.risksFound + 1
-                : state.risksFound;
-
-
-    state.alerts =
-        level === "Baixo"
-            ? state.alerts
-            : state.alerts + 1;
-
-
-    state.protection =
-        Math.max(
-            0,
-            100 - score
-        );
-
-
-    alert(
-        `Análise concluída!\n\n` +
-        `Arquivo: ${file.name}\n` +
-        `Risco: ${level}\n` +
-        `Score: ${score}/100`
+    return (
+        (bytes /
+            Math.pow(1024, i))
+            .toFixed(2)
+        + " "
+        + unidades[i]
     );
-
-
-    /*
-        Depois da análise,
-        manda o usuário para
-        a página de resultados.
-    */
-
-    navigation.forEach(item => {
-
-        item.classList.remove("active");
-
-        if (
-            item.dataset.page ===
-            "results"
-        ) {
-
-            item.classList.add("active");
-
-        }
-
-    });
-
-
-    loadPage("results");
 
 }
 
 
-/* =====================================
-   RELATÓRIO
-===================================== */
+// =========================================
+// TESTAR BACKEND
+// =========================================
 
-function generateReport() {
+async function testarBackend() {
 
-    if (!state.lastFile) {
+    try {
 
-        alert(
-            "Nenhuma análise disponível."
+        const response =
+            await fetch(
+                `${API_URL}/status`
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error();
+
+        }
+
+
+        console.log(
+            "🟢 DataGuard AI conectado!"
         );
 
-        return;
+
+    } catch (error) {
+
+        console.log(
+            "🔴 Backend não conectado."
+        );
+
     }
-
-
-    const content = `
-
-DataGuard AI
-Relatório de Segurança
-======================
-
-Arquivo:
-${state.lastFile.name}
-
-Nível de risco:
-${state.lastRisk.level}
-
-Score:
-${state.lastRisk.score}/100
-
-Resultado:
-${state.lastRisk.message}
-
-Arquivos analisados:
-${state.filesAnalyzed}
-
-Riscos encontrados:
-${state.risksFound}
-
-Alertas:
-${state.alerts}
-
-Proteção:
-${state.protection}%
-
-`;
-
-
-    const blob =
-        new Blob(
-            [content],
-            {
-                type:
-                    "text/plain"
-            }
-        );
-
-
-    const url =
-        URL.createObjectURL(blob);
-
-
-    const link =
-        document.createElement("a");
-
-
-    link.href = url;
-
-    link.download =
-        "DataGuard-AI-Relatorio.txt";
-
-
-    link.click();
-
-
-    URL.revokeObjectURL(url);
 
 }
 
 
-/* =====================================
-   NOTIFICAÇÕES
-===================================== */
-
-const notification =
-    document.getElementById(
-        "notificationBtn"
-    );
-
-
-notification.addEventListener(
-    "click",
-    () => {
-
-        if (state.alerts > 0) {
-
-            alert(
-                `Você possui ${state.alerts} alerta(s).`
-            );
-
-        } else {
-
-            alert(
-                "Você não possui novas notificações."
-            );
-
-        }
-
-    }
-);
-
-
-/* =====================================
-   INICIALIZAÇÃO
-===================================== */
-
-loadPage("dashboard");
-
-console.log(
-    "DataGuard AI iniciado."
-);
+testarBackend();
