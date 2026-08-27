@@ -1,535 +1,639 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-BR" data-theme="dark">
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>DataGuard AI</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataGuard AI — Proteção Inteligente de Dados</title>
     <link rel="stylesheet" href="style.css">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
-
-
 <body>
+    <!-- Notifications -->
+    <div id="notification-container" class="notification-container" aria-live="polite"></div>
 
-
-    <!-- =========================================
-         SIDEBAR
-    ========================================== -->
-
-    <aside id="sidebar" class="sidebar">
-
-        <div class="sidebar-top">
-
-            <div class="logo">
-
-                🛡️
-
-                <span>
-                    DataGuard AI
-                </span>
-
-            </div>
-
-
-            <button
-                id="toggleSidebar"
-                class="toggle-button"
-            >
-                ☰
-            </button>
-
+    <!-- Auth Section -->
+    <div id="auth-section" class="auth-section">
+        <div class="auth-bg">
+            <div class="auth-grid"></div>
+            <div class="auth-glow auth-glow-1"></div>
+            <div class="auth-glow auth-glow-2"></div>
         </div>
-
-
-        <nav>
-
-            <a
-                href="#"
-                class="menu-link active"
-                data-page="dashboard"
-            >
-                🏠
-                <span>Dashboard</span>
-            </a>
-
-
-            <a
-                href="#"
-                class="menu-link"
-                data-page="analisar"
-            >
-                🔍
-                <span>Analisar Arquivo</span>
-            </a>
-
-
-            <a
-                href="#"
-                class="menu-link"
-                data-page="historico"
-            >
-                📋
-                <span>Histórico</span>
-            </a>
-
-
-            <a
-                href="#"
-                class="menu-link"
-                data-page="configuracoes"
-            >
-                ⚙️
-                <span>Configurações</span>
-            </a>
-
-        </nav>
-
-    </aside>
-
-
-
-    <!-- =========================================
-         CONTEÚDO
-    ========================================== -->
-
-    <main id="main" class="main">
-
-
-        <!-- =====================================
-             DASHBOARD
-        ====================================== -->
-
-        <section
-            id="dashboard"
-            class="page active"
-        >
-
-            <div class="header">
-
-                <div>
-
-                    <h1>
-                        Dashboard
-                    </h1>
-
-                    <p>
-                        Proteção inteligente para seus dados.
-                    </p>
-
-                </div>
-
-
-                <div class="system-status">
-
-                    <span></span>
-
-                    Sistema online
-
-                </div>
-
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="logo-icon"><i data-lucide="shield-check"></i></div>
+                <h1>DataGuard <span>AI</span></h1>
+                <p>Proteção inteligente de dados sensíveis</p>
             </div>
 
-
-            <!-- ESTATÍSTICAS -->
-
-            <div class="stats">
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        📄
+            <!-- Login -->
+            <div id="login-form" class="auth-form">
+                <h2>Bem-vindo de volta</h2>
+                <p class="auth-subtitle">Entre para acessar o painel de segurança</p>
+                <form id="login">
+                    <div class="field-group">
+                        <label for="login-email">E-mail</label>
+                        <div class="input-wrap">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="login-email" placeholder="seu@email.com" required autocomplete="email">
+                        </div>
                     </div>
-
-                    <div>
-
-                        <small>
-                            Arquivos analisados
-                        </small>
-
-                        <strong id="totalFiles">
-                            0
-                        </strong>
-
+                    <div class="field-group">
+                        <label for="login-password">Senha</label>
+                        <div class="input-wrap">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="login-password" placeholder="Sua senha" required autocomplete="current-password">
+                            <button type="button" class="toggle-password" data-target="login-password" aria-label="Mostrar senha">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
                     </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        🔐
-                    </div>
-
-                    <div>
-
-                        <small>
-                            Dados protegidos
-                        </small>
-
-                        <strong id="protectedData">
-                            0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">
-                        ⚠️
-                    </div>
-
-                    <div>
-
-                        <small>
-                            Riscos encontrados
-                        </small>
-
-                        <strong id="riskCount">
-                            0
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
+                    <button type="submit" class="btn-primary btn-full" id="btn-login">
+                        <span class="btn-text">Entrar</span>
+                        <span class="btn-spinner hidden"><i data-lucide="loader-2" class="spin"></i></span>
+                    </button>
+                </form>
+                <p class="auth-footer">Não tem uma conta? <a href="#" id="show-register">Criar conta</a></p>
+                <div id="login-error" class="alert alert-error hidden" role="alert"></div>
             </div>
 
+            <!-- Register -->
+            <div id="register-form" class="auth-form hidden">
+                <h2>Criar conta</h2>
+                <p class="auth-subtitle">Comece a proteger seus dados agora</p>
+                <form id="register">
+                    <div class="field-group">
+                        <label for="reg-name">Nome completo</label>
+                        <div class="input-wrap">
+                            <i data-lucide="user" class="input-icon"></i>
+                            <input type="text" id="reg-name" placeholder="Seu nome" required autocomplete="name">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label for="reg-email">E-mail</label>
+                        <div class="input-wrap">
+                            <i data-lucide="mail" class="input-icon"></i>
+                            <input type="email" id="reg-email" placeholder="seu@email.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label for="reg-password">Senha</label>
+                        <div class="input-wrap">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="reg-password" placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
+                            <button type="button" class="toggle-password" data-target="reg-password" aria-label="Mostrar senha">
+                                <i data-lucide="eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label for="reg-confirm-password">Confirmar senha</label>
+                        <div class="input-wrap">
+                            <i data-lucide="lock" class="input-icon"></i>
+                            <input type="password" id="reg-confirm-password" placeholder="Repita a senha" required autocomplete="new-password">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-primary btn-full" id="btn-register">
+                        <span class="btn-text">Cadastrar</span>
+                        <span class="btn-spinner hidden"><i data-lucide="loader-2" class="spin"></i></span>
+                    </button>
+                </form>
+                <p class="auth-footer">Já tem uma conta? <a href="#" id="show-login">Fazer login</a></p>
+                <div id="register-error" class="alert alert-error hidden" role="alert"></div>
+            </div>
+        </div>
+    </div>
 
-
-            <!-- CARD -->
-
-            <div class="welcome-card">
-
-                <div>
-
-                    <h2>
-                        Comece uma análise
-                    </h2>
-
-                    <p>
-                        Envie um arquivo para identificar
-                        informações sensíveis automaticamente.
-                    </p>
-
+    <!-- Main App -->
+    <div id="main-app" class="app hidden">
+        <aside id="sidebar" class="sidebar" aria-label="Menu principal">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i data-lucide="shield-check"></i></div>
+                <div class="brand-text">
+                    <span class="brand-title">DataGuard</span>
+                    <span class="brand-badge">AI</span>
                 </div>
-
-
-                <button
-                    class="primary-button"
-                    id="goAnalyze"
-                >
-
-                    🔍
-
-                    Analisar arquivo
-
+                <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Recolher menu">
+                    <i data-lucide="chevron-left"></i>
                 </button>
-
             </div>
-
-
-        </section>
-
-
-
-        <!-- =====================================
-             ANALISAR
-        ====================================== -->
-
-        <section
-            id="analisar"
-            class="page"
-        >
-
-            <div class="header">
-
-                <div>
-
-                    <h1>
-                        Analisar Arquivo
-                    </h1>
-
-                    <p>
-                        Faça o upload de um arquivo para análise.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="upload-card">
-
-
-                <div class="upload-icon">
-
-                    📁
-
-                </div>
-
-
-                <h2>
-                    Selecione um arquivo
-                </h2>
-
-
-                <p>
-                    PDF, DOC, DOCX, TXT ou CSV
-                </p>
-
-
-                <input
-                    type="file"
-                    id="fileInput"
-                    accept=".pdf,.doc,.docx,.txt,.csv"
-                >
-
-
-                <label
-                    for="fileInput"
-                    class="file-button"
-                >
-
-                    📂
-
-                    Selecionar arquivo
-
-                </label>
-
-
-                <div
-                    id="selectedFile"
-                    class="selected-file"
-                >
-
-                    Nenhum arquivo selecionado
-
-                </div>
-
-
-                <div class="file-types">
-
-                    <span>PDF</span>
-                    <span>DOC</span>
-                    <span>DOCX</span>
-                    <span>TXT</span>
-                    <span>CSV</span>
-
-                </div>
-
-
-                <button
-                    id="analyzeButton"
-                    class="primary-button"
-                >
-
-                    🔍
-
-                    Analisar arquivo
-
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li><a href="#" data-page="dashboard" class="nav-item active" aria-current="page">
+                        <i data-lucide="layout-dashboard"></i><span class="nav-label">Dashboard</span>
+                    </a></li>
+                    <li><a href="#" data-page="analyze" class="nav-item">
+                        <i data-lucide="scan-search"></i><span class="nav-label">Analisar Arquivos</span>
+                    </a></li>
+                    <li><a href="#" data-page="history" class="nav-item">
+                        <i data-lucide="history"></i><span class="nav-label">Histórico</span>
+                    </a></li>
+                    <li><a href="#" data-page="reports" class="nav-item">
+                        <i data-lucide="file-text"></i><span class="nav-label">Relatórios</span>
+                    </a></li>
+                </ul>
+                <div class="nav-divider"></div>
+                <ul class="nav-list">
+                    <li><a href="#" data-page="security" class="nav-item">
+                        <i data-lucide="shield"></i><span class="nav-label">Segurança</span>
+                    </a></li>
+                    <li><a href="#" data-page="settings" class="nav-item">
+                        <i data-lucide="settings"></i><span class="nav-label">Configurações</span>
+                    </a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="nav-item nav-logout">
+                    <i data-lucide="log-out"></i><span class="nav-label">Sair</span>
                 </button>
-
-
             </div>
+        </aside>
 
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-
-            <!-- RESULTADO -->
-
-            <div
-                id="resultArea"
-                class="result-area"
-            >
-
-                <div class="result-empty">
-
-                    <div>
-                        🔎
+        <div class="content-wrapper">
+            <header class="app-header">
+                <div class="header-left">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Abrir menu">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <div class="header-title">
+                        <h2 id="page-title">Dashboard</h2>
+                        <p id="page-subtitle">Visão geral do sistema</p>
                     </div>
-
-                    <h3>
-                        Aguardando análise
-                    </h3>
-
-                    <p>
-                        O resultado aparecerá aqui.
-                    </p>
-
                 </div>
-
-            </div>
-
-
-        </section>
-
-
-
-        <!-- =====================================
-             HISTÓRICO
-        ====================================== -->
-
-        <section
-            id="historico"
-            class="page"
-        >
-
-            <div class="header">
-
-                <div>
-
-                    <h1>
-                        Histórico
-                    </h1>
-
-                    <p>
-                        Arquivos analisados anteriormente.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div
-                id="history"
-                class="history-card"
-            >
-
-                <div class="result-empty">
-
-                    <div>
-                        📋
+                <div class="header-right">
+                    <div class="header-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Sistema operacional</span>
                     </div>
-
-                    <h3>
-                        Nenhuma análise
-                    </h3>
-
-                    <p>
-                        As análises aparecerão aqui.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =====================================
-             CONFIGURAÇÕES
-        ====================================== -->
-
-        <section
-            id="configuracoes"
-            class="page"
-        >
-
-            <div class="header">
-
-                <div>
-
-                    <h1>
-                        Configurações
-                    </h1>
-
-                    <p>
-                        Configure o DataGuard AI.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="settings-card">
-
-
-                <div class="setting">
-
-                    <div>
-
-                        <h3>
-                            Análise automática
-                        </h3>
-
-                        <p>
-                            Analisar o arquivo automaticamente após o upload.
-                        </p>
-
+                    <button id="header-notifications" class="header-btn" aria-label="Notificações">
+                        <i data-lucide="bell"></i>
+                        <span class="header-badge hidden" id="notif-badge">0</span>
+                    </button>
+                    <div class="header-profile" id="header-profile">
+                        <div class="profile-avatar" id="header-avatar">U</div>
+                        <div class="profile-info">
+                            <span class="profile-name" id="header-name">Usuário</span>
+                            <span class="profile-role">Administrador</span>
+                        </div>
+                        <i data-lucide="chevron-down" class="profile-chevron"></i>
                     </div>
-
-
-                    <label class="switch">
-
-                        <input
-                            type="checkbox"
-                            checked
-                        >
-
-                        <span></span>
-
-                    </label>
-
                 </div>
+            </header>
 
-
-
-                <div class="setting">
-
-                    <div>
-
-                        <h3>
-                            Detecção de dados sensíveis
-                        </h3>
-
-                        <p>
-                            Identificar informações pessoais e sensíveis.
-                        </p>
-
+            <main class="main-content" id="main-scroll">
+                <!-- Dashboard -->
+                <section id="page-dashboard" class="page active">
+                    <div class="dashboard-header">
+                        <div class="welcome-text">
+                            <h1 id="welcome-message">Bem-vindo de volta</h1>
+                            <p>Aqui está o resumo da segurança dos seus dados</p>
+                        </div>
                     </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-blue"><i data-lucide="file-search"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="stat-analyses">0</span>
+                                <span class="stat-label">Análises realizadas</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-green"><i data-lucide="shield-check"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="stat-safe">0</span>
+                                <span class="stat-label">Arquivos seguros</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-red"><i data-lucide="alert-triangle"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="stat-risk">0</span>
+                                <span class="stat-label">Arquivos com risco</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon stat-icon-cyan"><i data-lucide="activity"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="stat-alerts">0</span>
+                                <span class="stat-label">Alertas totais</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card security-score-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="gauge"></i> Security Score</h3>
+                            </div>
+                            <div class="score-container">
+                                <div class="score-ring" id="score-ring">
+                                    <svg viewBox="0 0 120 120">
+                                        <circle class="score-track" cx="60" cy="60" r="52"/>
+                                        <circle class="score-progress" id="score-progress" cx="60" cy="60" r="52"/>
+                                    </svg>
+                                    <div class="score-value">
+                                        <span id="score-number">--</span><small>/100</small>
+                                    </div>
+                                </div>
+                                <div class="score-details">
+                                    <div class="score-level" id="score-level">--</div>
+                                    <p class="score-desc" id="score-desc">Realize uma análise para calcular o score</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card quick-action-card">
+                            <div class="card-header">
+                                <h3><i data-lucide="zap"></i> Ação rápida</h3>
+                            </div>
+                            <div class="quick-upload-area" id="quick-upload">
+                                <div class="quick-upload-icon"><i data-lucide="upload-cloud"></i></div>
+                                <h4>Analisar arquivo agora</h4>
+                                <p>Arraste um arquivo ou clique para selecionar</p>
+                                <button class="btn-primary"><i data-lucide="folder-open"></i> Selecionar arquivo</button>
+                                <input type="file" id="quick-file-input" hidden>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dashboard-card recent-activity">
+                        <div class="card-header">
+                            <h3><i data-lucide="clock"></i> Atividade recente</h3>
+                            <a href="#" data-page="history" class="card-link">Ver tudo <i data-lucide="arrow-right"></i></a>
+                        </div>
+                        <div class="activity-list" id="dashboard-activity">
+                            <div class="activity-empty">
+                                <i data-lucide="inbox"></i>
+                                <p>Nenhuma análise realizada ainda</p>
+                                <button class="btn-secondary" id="btn-first-analysis">Fazer primeira análise</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
+                <!-- Analyze -->
+                <section id="page-analyze" class="page">
+                    <div class="page-header">
+                        <h1>Analisar Arquivos</h1>
+                        <p>Envie arquivos para identificação de dados sensíveis</p>
+                    </div>
+                    <div class="analyze-layout">
+                        <div class="upload-panel">
+                            <div class="upload-zone" id="upload-zone">
+                                <div class="upload-content">
+                                    <div class="upload-illustration"><i data-lucide="shield-check"></i></div>
+                                    <h3>Analise seus arquivos</h3>
+                                    <p>Arraste arquivos aqui ou selecione do computador</p>
+                                    <button class="btn-primary btn-lg" id="upload-btn-select">
+                                        <i data-lucide="folder-open"></i> Selecionar arquivos
+                                    </button>
+                                    <div class="upload-formats">
+                                        <span class="format-tag">PDF</span>
+                                        <span class="format-tag">CSV</span>
+                                        <span class="format-tag">TXT</span>
+                                        <span class="format-tag">JSON</span>
+                                        <span class="format-tag">XLSX</span>
+                                    </div>
+                                </div>
+                                <input type="file" id="main-file-input" hidden accept=".txt,.csv,.json,.pdf,.xlsx">
+                            </div>
+                            <div id="file-list" class="file-list hidden">
+                                <h4>Arquivo selecionado</h4>
+                                <div class="file-item" id="file-item">
+                                    <div class="file-icon"><i data-lucide="file-text"></i></div>
+                                    <div class="file-details">
+                                        <span class="file-name" id="file-name"></span>
+                                        <span class="file-size" id="file-size"></span>
+                                    </div>
+                                    <button class="file-remove" id="file-remove" aria-label="Remover arquivo"><i data-lucide="x"></i></button>
+                                </div>
+                                <button class="btn-primary btn-full" id="start-analysis">
+                                    <span class="btn-text"><i data-lucide="scan-search"></i> Iniciar análise</span>
+                                    <span class="btn-spinner hidden"><i data-lucide="loader-2" class="spin"></i> Analisando...</span>
+                                </button>
+                            </div>
+                            <div id="analysis-loading" class="analysis-loading hidden">
+                                <div class="loading-animation">
+                                    <div class="loading-ring"></div>
+                                    <div class="loading-ring loading-ring-2"></div>
+                                    <i data-lucide="shield-check" class="loading-icon"></i>
+                                </div>
+                                <h3>Analisando arquivo...</h3>
+                                <p>A IA está verificando o conteúdo e procurando informações sensíveis</p>
+                            </div>
+                            <div id="analysis-error" class="alert alert-error hidden"></div>
+                        </div>
+                        <div class="upload-info">
+                            <div class="info-card">
+                                <h4><i data-lucide="info"></i> O que é analisado</h4>
+                                <ul>
+                                    <li><i data-lucide="check-circle-2"></i> CPF e CNPJ</li>
+                                    <li><i data-lucide="check-circle-2"></i> E-mails e telefones</li>
+                                    <li><i data-lucide="check-circle-2"></i> Cartões de crédito</li>
+                                    <li><i data-lucide="check-circle-2"></i> Senhas e tokens expostos</li>
+                                    <li><i data-lucide="check-circle-2"></i> Chaves de API</li>
+                                    <li><i data-lucide="check-circle-2"></i> Endereços IP</li>
+                                </ul>
+                            </div>
+                            <div class="info-card">
+                                <h4><i data-lucide="lock"></i> Privacidade garantida</h4>
+                                <p>Seus arquivos são processados localmente e não são armazenados permanentemente no servidor.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-                    <label class="switch">
+                <!-- Results -->
+                <section id="page-results" class="page">
+                    <div class="page-header">
+                        <h1>Resultado da Análise</h1>
+                        <p>Detalhes da verificação de segurança</p>
+                    </div>
+                    <div id="results-content">
+                        <div class="results-empty">
+                            <div class="empty-illustration"><i data-lucide="clipboard-list"></i></div>
+                            <h3>Nenhum resultado para exibir</h3>
+                            <p>Realize uma análise primeiro para ver os resultados aqui.</p>
+                            <button class="btn-primary" id="btn-go-analyze"><i data-lucide="scan-search"></i> Analisar arquivo</button>
+                        </div>
+                    </div>
+                </section>
 
-                        <input
-                            type="checkbox"
-                            checked
-                        >
+                <!-- History -->
+                <section id="page-history" class="page">
+                    <div class="page-header">
+                        <h1>Histórico</h1>
+                        <p>Todas as análises realizadas</p>
+                    </div>
+                    <div class="history-toolbar">
+                        <div class="search-box">
+                            <i data-lucide="search"></i>
+                            <input type="text" id="history-search" placeholder="Buscar por arquivo...">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="history-table">
+                            <thead>
+                                <tr><th>Arquivo</th><th>Tipo</th><th>Data</th><th>Status</th><th>Risco</th><th>Ações</th></tr>
+                            </thead>
+                            <tbody id="history-tbody">
+                                <tr class="table-empty">
+                                    <td colspan="6">
+                                        <div class="empty-state">
+                                            <i data-lucide="inbox"></i>
+                                            <p>Nenhuma análise no histórico</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
 
-                        <span></span>
+                <!-- Reports -->
+                <section id="page-reports" class="page">
+                    <div class="page-header">
+                        <h1>Relatórios</h1>
+                        <p>Documentos e relatórios de análise</p>
+                    </div>
+                    <div class="reports-empty">
+                        <div class="empty-illustration"><i data-lucide="file-text"></i></div>
+                        <h3>Relatórios</h3>
+                        <p>Os relatórios das análises aparecerão aqui.</p>
+                        <span class="badge badge-soon">Em breve</span>
+                    </div>
+                </section>
 
-                    </label>
+                <!-- Security -->
+                <section id="page-security" class="page">
+                    <div class="page-header">
+                        <h1>Segurança</h1>
+                        <p>Gerencie a segurança da sua conta</p>
+                    </div>
+                    <div class="settings-layout">
+                        <div class="settings-nav">
+                            <button class="settings-nav-item active" data-security-tab="password">
+                                <i data-lucide="key-round"></i><span>Alterar senha</span>
+                            </button>
+                            <button class="settings-nav-item" data-security-tab="2fa">
+                                <i data-lucide="smartphone"></i><span>Autenticação em 2 fatores</span>
+                                <span class="badge badge-soon">Em breve</span>
+                            </button>
+                            <button class="settings-nav-item" data-security-tab="sessions">
+                                <i data-lucide="monitor"></i><span>Sessões ativas</span>
+                                <span class="badge badge-soon">Em breve</span>
+                            </button>
+                        </div>
+                        <div class="settings-panels">
+                            <div id="security-password" class="settings-panel active">
+                                <h3>Alterar senha</h3>
+                                <form id="password-form" class="settings-form">
+                                    <div class="field-group">
+                                        <label>Senha atual</label>
+                                        <div class="input-wrap">
+                                            <input type="password" id="sec-current-password" placeholder="Digite sua senha atual">
+                                        </div>
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Nova senha</label>
+                                        <div class="input-wrap">
+                                            <input type="password" id="sec-new-password" placeholder="Mínimo 8 caracteres">
+                                        </div>
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Confirmar nova senha</label>
+                                        <div class="input-wrap">
+                                            <input type="password" id="sec-confirm-password" placeholder="Repita a nova senha">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-primary"><i data-lucide="save"></i> Salvar alterações</button>
+                                </form>
+                            </div>
+                            <div id="security-2fa" class="settings-panel">
+                                <div class="coming-soon">
+                                    <i data-lucide="construction"></i>
+                                    <h3>Em desenvolvimento</h3>
+                                    <p>A autenticação em dois fatores será implementada em uma atualização futura.</p>
+                                </div>
+                            </div>
+                            <div id="security-sessions" class="settings-panel">
+                                <div class="coming-soon">
+                                    <i data-lucide="construction"></i>
+                                    <h3>Em desenvolvimento</h3>
+                                    <p>O gerenciamento de sessões será implementado em uma atualização futura.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
 
-                </div>
+                <!-- Settings -->
+                <section id="page-settings" class="page">
+                    <div class="page-header">
+                        <h1>Configurações</h1>
+                        <p>Personalize sua experiência</p>
+                    </div>
+                    <div class="settings-layout">
+                        <div class="settings-nav">
+                            <button class="settings-nav-item active" data-settings-tab="account">
+                                <i data-lucide="user"></i><span>Conta</span>
+                            </button>
+                            <button class="settings-nav-item" data-settings-tab="interface">
+                                <i data-lucide="monitor"></i><span>Interface</span>
+                            </button>
+                            <button class="settings-nav-item" data-settings-tab="notifications">
+                                <i data-lucide="bell"></i><span>Notificações</span>
+                            </button>
+                            <button class="settings-nav-item" data-settings-tab="privacy">
+                                <i data-lucide="eye-off"></i><span>Privacidade</span>
+                            </button>
+                        </div>
+                        <div class="settings-panels">
+                            <div id="settings-account" class="settings-panel active">
+                                <h3>Informações da conta</h3>
+                                <form id="account-form" class="settings-form">
+                                    <div class="field-group">
+                                        <label>Nome completo</label>
+                                        <div class="input-wrap">
+                                            <i data-lucide="user" class="input-icon"></i>
+                                            <input type="text" id="settings-name" placeholder="Seu nome">
+                                        </div>
+                                    </div>
+                                    <div class="field-group">
+                                        <label>E-mail</label>
+                                        <div class="input-wrap">
+                                            <i data-lucide="mail" class="input-icon"></i>
+                                            <input type="email" id="settings-email" placeholder="seu@email.com">
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn-primary"><i data-lucide="save"></i> Salvar alterações</button>
+                                </form>
+                                <div class="danger-zone">
+                                    <h4><i data-lucide="alert-triangle"></i> Zona de perigo</h4>
+                                    <p>Ações irreversíveis que afetam sua conta.</p>
+                                    <div class="danger-actions">
+                                        <button class="btn-danger btn-outline" id="btn-clear-history"><i data-lucide="trash-2"></i> Limpar histórico</button>
+                                        <button class="btn-danger" id="btn-delete-account"><i data-lucide="user-x"></i> Excluir conta</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="settings-interface" class="settings-panel">
+                                <h3>Aparência</h3>
+                                <div class="settings-form">
+                                    <div class="field-group">
+                                        <label>Tema</label>
+                                        <div class="theme-options">
+                                            <label class="theme-option" data-theme-value="dark">
+                                                <input type="radio" name="theme" value="dark">
+                                                <div class="theme-preview theme-dark"></div>
+                                                <span>Escuro</span>
+                                            </label>
+                                            <label class="theme-option" data-theme-value="light">
+                                                <input type="radio" name="theme" value="light">
+                                                <div class="theme-preview theme-light"></div>
+                                                <span>Claro</span>
+                                            </label>
+                                            <label class="theme-option" data-theme-value="system">
+                                                <input type="radio" name="theme" value="system">
+                                                <div class="theme-preview theme-system"></div>
+                                                <span>Sistema</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Sidebar recolhida por padrão</span>
+                                            <input type="checkbox" id="setting-sidebar" class="toggle-input">
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Animações</span>
+                                            <input type="checkbox" id="setting-animations" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="settings-notifications" class="settings-panel">
+                                <h3>Notificações</h3>
+                                <div class="settings-form">
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Alertas de segurança</span>
+                                            <input type="checkbox" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Resultado de análises</span>
+                                            <input type="checkbox" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Notificações do sistema</span>
+                                            <input type="checkbox" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="settings-privacy" class="settings-panel">
+                                <h3>Privacidade e dados</h3>
+                                <div class="settings-form">
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Salvar histórico de análises</span>
+                                            <input type="checkbox" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="toggle-label">
+                                            <span>Mascarar dados sensíveis nos resultados</span>
+                                            <input type="checkbox" class="toggle-input" checked>
+                                            <span class="toggle-switch"></span>
+                                        </label>
+                                    </div>
+                                    <div class="field-group">
+                                        <label>Retenção de dados</label>
+                                        <select class="input-select">
+                                            <option>30 dias</option>
+                                            <option>90 dias</option>
+                                            <option>1 ano</option>
+                                            <option>Para sempre</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
 
-
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal" id="modal-confirm">
+            <div class="modal-header">
+                <h3 id="modal-title">Confirmar ação</h3>
+                <button class="modal-close" id="modal-close" aria-label="Fechar"><i data-lucide="x"></i></button>
             </div>
-
-        </section>
-
-
-    </main>
-
+            <div class="modal-body">
+                <p id="modal-message">Tem certeza?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="modal-cancel">Cancelar</button>
+                <button class="btn-danger" id="modal-confirm-btn">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
-
 </body>
-
 </html>
