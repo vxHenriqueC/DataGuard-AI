@@ -10,7 +10,6 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-    <!-- Notifications -->
     <div id="notification-container" class="notification-container" aria-live="polite"></div>
 
     <!-- Auth Section -->
@@ -196,28 +195,28 @@
                         <div class="stat-card">
                             <div class="stat-icon stat-icon-blue"><i data-lucide="file-search"></i></div>
                             <div class="stat-info">
-                                <span class="stat-value" id="stat-analyses">0</span>
+                                <span class="stat-value skeleton skeleton-text" id="stat-analyses"></span>
                                 <span class="stat-label">Análises realizadas</span>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon stat-icon-green"><i data-lucide="shield-check"></i></div>
                             <div class="stat-info">
-                                <span class="stat-value" id="stat-safe">0</span>
+                                <span class="stat-value skeleton skeleton-text" id="stat-safe"></span>
                                 <span class="stat-label">Arquivos seguros</span>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon stat-icon-red"><i data-lucide="alert-triangle"></i></div>
                             <div class="stat-info">
-                                <span class="stat-value" id="stat-risk">0</span>
+                                <span class="stat-value skeleton skeleton-text" id="stat-risk"></span>
                                 <span class="stat-label">Arquivos com risco</span>
                             </div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon stat-icon-cyan"><i data-lucide="activity"></i></div>
                             <div class="stat-info">
-                                <span class="stat-value" id="stat-alerts">0</span>
+                                <span class="stat-value skeleton skeleton-text" id="stat-alerts"></span>
                                 <span class="stat-label">Alertas totais</span>
                             </div>
                         </div>
@@ -369,6 +368,13 @@
                         <div class="search-box">
                             <i data-lucide="search"></i>
                             <input type="text" id="history-search" placeholder="Buscar por arquivo...">
+                        </div>
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-filter="all">Todos</button>
+                            <button class="filter-btn" data-filter="CRÍTICO">Críticos</button>
+                            <button class="filter-btn" data-filter="ALTO">Alto Risco</button>
+                            <button class="filter-btn" data-filter="MÉDIO">Médio Risco</button>
+                            <button class="filter-btn" data-filter="BAIXO">Seguros</button>
                         </div>
                     </div>
                     <div class="table-container">
@@ -547,13 +553,6 @@
                                             <span class="toggle-switch"></span>
                                         </label>
                                     </div>
-                                    <div class="field-group">
-                                        <label class="toggle-label">
-                                            <span>Animações</span>
-                                            <input type="checkbox" id="setting-animations" class="toggle-input" checked>
-                                            <span class="toggle-switch"></span>
-                                        </label>
-                                    </div>
                                 </div>
                             </div>
                             <div id="settings-notifications" class="settings-panel">
@@ -562,20 +561,6 @@
                                     <div class="field-group">
                                         <label class="toggle-label">
                                             <span>Alertas de segurança</span>
-                                            <input type="checkbox" class="toggle-input" checked>
-                                            <span class="toggle-switch"></span>
-                                        </label>
-                                    </div>
-                                    <div class="field-group">
-                                        <label class="toggle-label">
-                                            <span>Resultado de análises</span>
-                                            <input type="checkbox" class="toggle-input" checked>
-                                            <span class="toggle-switch"></span>
-                                        </label>
-                                    </div>
-                                    <div class="field-group">
-                                        <label class="toggle-label">
-                                            <span>Notificações do sistema</span>
                                             <input type="checkbox" class="toggle-input" checked>
                                             <span class="toggle-switch"></span>
                                         </label>
@@ -591,22 +576,6 @@
                                             <input type="checkbox" class="toggle-input" checked>
                                             <span class="toggle-switch"></span>
                                         </label>
-                                    </div>
-                                    <div class="field-group">
-                                        <label class="toggle-label">
-                                            <span>Mascarar dados sensíveis nos resultados</span>
-                                            <input type="checkbox" class="toggle-input" checked>
-                                            <span class="toggle-switch"></span>
-                                        </label>
-                                    </div>
-                                    <div class="field-group">
-                                        <label>Retenção de dados</label>
-                                        <select class="input-select">
-                                            <option>30 dias</option>
-                                            <option>90 dias</option>
-                                            <option>1 ano</option>
-                                            <option>Para sempre</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
