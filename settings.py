@@ -1,31 +1,34 @@
 # settings.py
-# Gerenciamento das configurações do DataGuard AI
-
 from pydantic_settings import BaseSettings
-from pydantic import Field
-
+from typing import List
 
 class Settings(BaseSettings):
-    # Configurações da aplicação
     APP_NAME: str = "DataGuard AI"
     APP_VERSION: str = "1.0.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
-    # Segurança
-    SECRET_KEY: str = "dataguard-super-secret-key-change-in-production"
+    # Segurança & JWT
+    SECRET_KEY: str = "change-this-in-production-use-a-strong-random-secret"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
 
-    # Upload
+    # Upload & Arquivos
     MAX_FILE_SIZE_MB: int = 10
-    UPLOAD_DIR: str = "uploads"
+    ALLOWED_EXTENSIONS: List[str] = [
+        "pdf", "csv", "xlsx", "docx", "txt", "json", "xml", "log"
+    ]
+
+    # Integração IA
+    AI_API_KEY: str = ""
+    AI_MODEL: str = "gemini-1.5-pro"
+    AI_ENABLED: bool = True
 
     # Banco de dados
     DATABASE_URL: str = "sqlite:///./dataguard.db"
 
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
-
-# Instância global de configurações
 settings = Settings()
