@@ -1,13 +1,16 @@
 # app.py
-# Rotas e API principal do DataGuard AI
-
+import json
 from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from settings import settings
-from database import init_db
-from auth import register_user, login_user, get_current_user
+from database import (
+    init_db, save_analysis, get_user_analyses, 
+    get_user_stats, delete_session
+)
+from auth import register_user, login_user, get_current_user, security
 from models import (
     UserRegister, UserLogin, UserResponse, UserUpdate,
     PasswordUpdate
@@ -17,119 +20,53 @@ from analyzer import analyze_file
 # Inicializa o banco de dados
 init_db()
 
-# Cria a aplicacao FastAPI
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="API de seguranca e protecao de dados"
+    description="API de segurança e proteção de dados"
 )
 
-# Configuracao de CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
 # ============================
-# Rotas do Sistema
+# Rotas do Sistema & Autenticação
 # ============================
 
 @app.get("/")
 async def root():
-    return {
-        "name": settings.APP_NAME,
-        "version": settings.APP_VERSION,
-        "status": "online"
-    }
-
-
-@app.get("/health")
-async def health_check():
-    return {
-        "status": "healthy",
-        "database": "connected",
-        "api": "running"
-    }
-
-
-# ============================
-# Rotas de Autenticacao
-# ============================
+    return {"name": settings.APP_NAME, "version": settings.APP_VERSION, "status": "online"}
 
 @app.post("/register")
 async def register(user_data: UserRegister):
-    result = register_user(user_data)
-    return result
-
+    return register_user(user_data)
 
 @app.post("/login")
 async def login(user_data: UserLogin):
-    result = login_user(user_data)
-    return result
-
+    return login_user(user_data)
 
 @app.get("/me", response_model=UserResponse)
 async def get_me(current_user: dict = Depends(get_current_user)):
-    return {
-        "id": current_user["id"],
-        "name": current_user["name"],
-        "email": current_user["email"],
-        "created_at": current_user["created_at"],
-        "last_login": current_user["last_login"],
-        "analyses_count": current_user["analyses_count"],
-        "risks_found": current_user["risks_found"],
-        "profile_picture": current_user["profile_picture"]
-    }
-
+    return current_user
 
 @app.post("/logout")
-async def logout(current_user: dict = Depends(get_current_user)):
+async def logout(
+    current_user: dict = Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    # Remove a sessão ativa do banco de dados
+    delete_session(credentials.credentials)
     return {"success": True, "message": "Logout realizado com sucesso."}
 
 
 # ============================
-# Rotas de Perfil
-# ============================
-
-@app.put("/profile")
-async def update_profile(
-    user_update: UserUpdate,
-    current_user: dict = Depends(get_current_user)
-):
-    return {"success": True, "message": "Perfil atualizado com sucesso."}
-
-
-@app.put("/profile/password")
-async def update_password(
-    password_data: PasswordUpdate,
-    current_user: dict = Depends(get_current_user)
-):
-    return {"success": True, "message": "Senha atualizada com sucesso."}
-
-
-# ============================
-# Rotas de Configuracoes
-# ============================
-
-@app.get("/settings")
-async def get_settings(current_user: dict = Depends(get_current_user)):
-    return {"success": True, "settings": {}}
-
-
-@app.put("/settings")
-async def update_settings(
-    settings_data: dict,
-    current_user: dict = Depends(get_current_user)
-):
-    return {"success": True, "message": "Configuracoes atualizadas com sucesso."}
-
-
-# ============================
-# Rotas de Analise
+# Rotas de Análise (Integradas ao Banco)
 # ============================
 
 @app.post("/analyze")
@@ -138,37 +75,35 @@ async def analyze(
     current_user: dict = Depends(get_current_user)
 ):
     content = await file.read()
+    
+    # Executa a análise (Motor Híbrido)
     result = analyze_file(file.filename, content)
+    
+    if result.get("status") == "completed":
+        # Salva o resultado no banco de dados para o histórico
+        save_analysis(
+            user_id=current_user["id"],
+            file_name=result["file"],
+            file_type=result["file_type"],
+            risk_score=result["risk_score"],
+            risk_level=result["risk_level"].value,
+            alerts=result["summary"]["total_findings"],
+            result_json=json.dumps(result)
+        )
+    
     return result
-
 
 @app.get("/stats")
 async def get_stats(current_user: dict = Depends(get_current_user)):
-    return {
-        "success": True,
-        "total_analyses": 0,
-        "total_alerts": 0,
-        "last_analysis": None
-    }
-
+    # Busca estatísticas reais do banco
+    stats = get_user_stats(current_user["id"])
+    return {"success": True, **stats}
 
 @app.get("/analyses")
 async def get_analyses(current_user: dict = Depends(get_current_user)):
-    return {"success": True, "analyses": []}
-
-
-# ============================
-# Rotas de Relatorios
-# ============================
-
-@app.get("/reports")
-async def get_reports(current_user: dict = Depends(get_current_user)):
-    return {"success": True, "reports": []}
-
-
-@app.get("/reports/{report_id}")
-async def get_report(report_id: int, current_user: dict = Depends(get_current_user)):
-    return {"success": True, "report": None}
+    # Busca histórico real do usuário
+    history = get_user_analyses(current_user["id"])
+    return {"success": True, "analyses": history}
 
 
 # ============================
@@ -182,10 +117,13 @@ async def http_exception_handler(request, exc):
         content={"success": False, "error": exc.detail}
     )
 
-
 @app.exception_handler(Exception)
 async def general_exception_handler(request, exc):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"success": False, "error": "Erro interno do servidor."}
+        content={"success": False, "error": f"Erro interno do servidor: {str(exc)}"}
     )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
