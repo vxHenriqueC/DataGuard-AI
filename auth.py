@@ -173,3 +173,4 @@ def login_user(user_data: UserLogin) -> dict:
         "access_token": access_token,
         "token_type": "bearer"
     }
+
