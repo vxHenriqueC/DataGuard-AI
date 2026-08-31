@@ -320,3 +320,9 @@ def delete_all_user_sessions(user_id: int) -> int:
         cursor.execute("DELETE FROM sessions WHERE user_id = ?", (user_id,))
         conn.commit()
         return cursor.rowcount
+
+def clear_user_analyses(user_id: int):
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM analyses WHERE user_id = ?", (user_id,))
+        conn.commit()
