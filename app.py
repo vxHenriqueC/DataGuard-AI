@@ -4,6 +4,7 @@ from fastapi import FastAPI, File, UploadFile, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from database import init_db, save_analysis, get_user_analyses, get_user_stats, clear_user_analyses
 
 from settings import settings
 from database import (
@@ -20,10 +21,17 @@ from analyzer import analyze_file
 # Inicializa o banco de dados
 init_db()
 
-app = FastAPI(
-    title=settings.APP_NAME,
-    version=settings.APP_VERSION,
-    description="API de segurança e proteção de dados"
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.add_middleware(
@@ -124,6 +132,8 @@ async def general_exception_handler(request, exc):
         content={"success": False, "error": f"Erro interno do servidor: {str(exc)}"}
     )
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+@app.delete("/analyses")
+async def clear_analyses(current_user: dict = Depends(get_current_user)):
+    clear_user_analyses(current_user["id"])
+    return {"message": "Histórico limpo com sucesso."}
+
