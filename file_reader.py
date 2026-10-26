@@ -1,11 +1,13 @@
-# file_reader.py
 import csv
 import json
 import os
 import re
 from io import StringIO, BytesIO
 from typing import List, Tuple, Optional
-import defusedxml.minidom as xml_minidom
+try:
+    import defusedxml.minidom as xml_minidom
+except ImportError:
+    import xml.dom.minidom as xml_minidom
 from pypdf import PdfReader
 from openpyxl import load_workbook
 import docx
@@ -29,7 +31,7 @@ DANGEROUS_EXTENSIONS = {
 
 def sanitize_filename(filename: str) -> str:
     """Higieniza o nome do arquivo para prevenir Path Traversal."""
-    clean_name = os.path.basename(filename)
+    clean_name = os.path.basename(filename or "uploaded_file")
     clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', clean_name)
     return clean_name or "uploaded_file"
 
@@ -52,9 +54,9 @@ def validate_file_content(file_name: str, content: bytes) -> Tuple[bool, Optiona
     if ext not in settings.ALLOWED_EXTENSIONS:
         return False, f"Formato .{ext} não suportado. Formatos aceitos: {', '.join(settings.ALLOWED_EXTENSIONS)}"
 
-    # Verificação de Magic Bytes para formatos binários
     if ext in MAGIC_HEADERS:
-        is_valid_magic = any(content.startswith(magic) for magic in MAGIC_HEADERS[ext])
+        stripped = content.lstrip()
+        is_valid_magic = any(stripped.startswith(magic) or content.startswith(magic) for magic in MAGIC_HEADERS[ext])
         if not is_valid_magic:
             return False, f"Assinatura de arquivo inválida ou corrompida para o formato .{ext}."
 
@@ -184,7 +186,7 @@ def extract_json(content: bytes) -> List[ExtractedUnit]:
 def extract_xml(content: bytes) -> List[ExtractedUnit]:
     units = []
     dom = xml_minidom.parseString(content)
-    
+
     def traverse_node(node, path=""):
         if node.nodeType == node.ELEMENT_NODE:
             current_path = f"{path}/{node.tagName}" if path else node.tagName
@@ -214,7 +216,7 @@ def read_file_structural(file_name: str, content: bytes) -> FileExtractionResult
     """Extrai texto e estruturas retendo informações contextuais de posição."""
     safe_name = sanitize_filename(file_name)
     is_valid, err_msg = validate_file_content(safe_name, content)
-    
+
     if not is_valid:
         return FileExtractionResult(
             success=False,
