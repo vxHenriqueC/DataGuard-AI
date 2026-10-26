@@ -1,4 +1,3 @@
-# models.py
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
@@ -23,6 +22,7 @@ class FindingItem(BaseModel):
     value_masked: str
     reason: str
     recommendation: str
+    action: Optional[str] = None
     context_snippet: Optional[str] = None
 
 
@@ -35,14 +35,20 @@ class AnalysisSummary(BaseModel):
 
 
 class AnalysisReportResponse(BaseModel):
+    id: Optional[int] = None
     status: str = "completed"
     file: str
+    file_name: Optional[str] = None
     file_type: str
+    file_size: Optional[int] = 0
     risk_score: int = Field(..., ge=0, le=100)
     risk_level: RiskLevel
+    total_alerts: int = 0
     summary: AnalysisSummary
     findings: List[FindingItem]
     recommendations: List[str]
+    ai_mode: str = "deterministic_engine"
+    created_at: Optional[str] = None
 
 
 # ============================
@@ -83,7 +89,7 @@ class UserResponse(BaseModel):
     id: int
     name: str
     email: str
-    created_at: datetime
+    created_at: Optional[datetime] = None
     last_login: Optional[datetime] = None
     analyses_count: int = 0
     risks_found: int = 0
@@ -102,4 +108,17 @@ class UserUpdate(BaseModel):
 class PasswordUpdate(BaseModel):
     current_password: str
     new_password: str = Field(..., min_length=8)
-    confirm_new_password: str
+    confirm_new_password: Optional[str] = None
+
+
+class UserSettingsUpdate(BaseModel):
+    theme: Optional[str] = None
+    language: Optional[str] = None
+    compact_interface: Optional[int] = None
+    auto_analysis: Optional[int] = None
+    min_risk_alert: Optional[str] = None
+    max_file_size_mb: Optional[int] = None
+    allowed_file_types: Optional[str] = None
+    detectors_enabled: Optional[Dict[str, Any]] = None
+    notifications: Optional[Dict[str, Any]] = None
+    privacy: Optional[Dict[str, Any]] = None
